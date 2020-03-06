@@ -1,8 +1,6 @@
 # Minimum CMake version
 cmake_minimum_required(VERSION 3.2)
 
-enable_testing()
-
 # Custom macro function to add project filters
 macro(add_project_filters path input_list prepend)
   foreach(_source IN ITEMS ${${input_list}})
@@ -27,7 +25,7 @@ ENDMACRO(MACRO_ENSURE_OUT_OF_SOURCE_BUILD)
 
 MACRO_ENSURE_OUT_OF_SOURCE_BUILD("${CMAKE_PROJECT_NAME} requires an out of source build.")
 
+project(HelloSockets)
+
 add_subdirectory(Client)
 add_subdirectory(Server)
-
-project(HelloSockets)

@@ -58,8 +58,7 @@ int __cdecl main(int argc, char** argv)
     for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
     {
         // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
-            ptr->ai_protocol);
+        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,  ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET)
         {
             printf("socket failed with error: %ld\n", WSAGetLastError());
@@ -101,7 +100,8 @@ int __cdecl main(int argc, char** argv)
 
     // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
+    if (iResult == SOCKET_ERROR)
+    {
         printf("shutdown failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
