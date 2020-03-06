@@ -55,8 +55,8 @@ int __cdecl main(int argc, char** argv)
     }
 
     // Attempt to connect to an address until one succeeds
-    for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
-
+    for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
+    {
         // Create a SOCKET for connecting to server
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
