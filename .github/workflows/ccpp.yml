@@ -13,9 +13,16 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: configure
-      run: mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS="-Werror" ..
-    - name: build
-      run: cmake --build build
-    - name: test
-      run: cd build && ctest
+    - name: Build cpp17 project
+      uses: nicledomaS/cmake_build_action@v1
+      with:
+        # Git submodule update
+        submodule_update: OFF # optional, default is OFF
+        # Cmake args (example -D<ARG1>=value;-D<ARG1>=value)
+        cmake_args: "" # optional, default is 
+        # Run unit tests
+        run_tests: ON # optional, default is OFF
+        # Cmake arg for turn build unit test (if need)
+        unit_test_build: OFF # optional, default is 
+        # For multi-configuration tools, choose configuration <Release or Debug>
+        config: Release # optional, default is Release
