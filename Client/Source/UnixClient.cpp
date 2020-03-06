@@ -1,7 +1,11 @@
 #ifndef WIN32
+#include "UnixClient.h"
 
-int main()
+UnixClient::UnixClient()
 {
-	return 0;
+}
+
+UnixClient::~UnixClient()
+{
 }
 #endif // !WIN32

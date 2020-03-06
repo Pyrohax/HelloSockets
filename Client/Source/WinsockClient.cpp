@@ -1,6 +1,7 @@
 #ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
+#include "WinsockClient.h"
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -17,7 +18,15 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 
-int __cdecl main(int argc, char** argv)
+WinsockClient::WinsockClient()
+{
+}
+
+WinsockClient::~WinsockClient()
+{
+}
+
+int WinsockClient::Update()
 {
     WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;
