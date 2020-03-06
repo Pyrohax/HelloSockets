@@ -10,7 +10,6 @@ int __cdecl main(int argc, char** argv)
     WinsockClient server;
     server.Update();
 #elif !WIN32
-#include "UnixServer.h"
     UnixClient server;
 #endif // !WIN32
 
