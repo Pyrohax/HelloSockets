@@ -17,12 +17,12 @@ jobs:
       uses: nicledomaS/cmake_build_action@v1
       with:
         # Git submodule update
-        submodule_update: OFF # optional, default is OFF
+        submodule_update: OFF # Default is OFF
         # Cmake args (example -D<ARG1>=value;-D<ARG1>=value)
-        cmake_args: "" # optional, default is 
+        cmake_args: -DCMAKE_CXX_FLAGS="-Werror"
         # Run unit tests
-        run_tests: ON # optional, default is OFF
+        run_tests: ON # Default is OFF
         # Cmake arg for turn build unit test (if need)
-        unit_test_build: OFF # optional, default is 
+        unit_test_build: ""
         # For multi-configuration tools, choose configuration <Release or Debug>
-        config: Release # optional, default is Release
+        config: Release # Default is Release
