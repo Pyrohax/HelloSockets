@@ -9,16 +9,16 @@ public:
 	WinsockClient();
 	~WinsockClient();
 
-	void ConnectToServer(const char* aServerName);
+	bool Connect(const char* aServerName);
+	bool Send(const char* aMessage);
+	bool Fetch();
+	bool Close();
 
+private:
 	bool Startup();
 	bool ResolveConnection();
-	bool Poll();
-	bool Send(const char* aMessage);
-	bool Close();
-	void Fetch();
-	bool Fail();
-	void Clean();
+	bool TryConnectToAddress();
+	bool ValidateConnection();
 
 private:
 	Connection* myConnection;

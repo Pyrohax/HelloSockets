@@ -16,12 +16,10 @@ int __cdecl main(int argc, char** argv)
     std::cout << "Enter the server name:" << std::endl;
     std::cin >> input;
 
-    client.ConnectToServer(input.c_str());
-
-    std::cout << "Enter the server name:" << std::endl;
-    std::cin >> input;
-
-    client.Send(input.c_str());
+    client.Connect(input.c_str());
+    client.Send("Hello World!");
+    client.Fetch();
+    client.Close();
 #elif !WIN32
     UnixClient client;
 #endif // !WIN32

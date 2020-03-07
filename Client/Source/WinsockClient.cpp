@@ -25,11 +25,10 @@ WinsockClient::~WinsockClient()
 {
 }
 
-void WinsockClient::ConnectToServer(const char* aServerName)
+bool WinsockClient::Connect(const char* aServerName)
 {
     myConnection = new Connection();
     myConnection->myServerName = aServerName;
-    myConnection->myInMessageBufferLength = 512;
 
     Startup();
 
@@ -42,22 +41,16 @@ void WinsockClient::ConnectToServer(const char* aServerName)
     myConnection->myHints.ai_socktype = SOCK_STREAM;
     myConnection->myHints.ai_protocol = IPPROTO_TCP;
 
-    ResolveConnection();
+    if (!ResolveConnection())
+        return false;
 
-    Poll();
+    if (!TryConnectToAddress())
+        return false;
 
     freeaddrinfo(myConnection->myResult);
 
-    if (myConnection->mySocket == INVALID_SOCKET)
-        Fail();
-
-    //Send();
-
-    //Close();
-
-    Fetch();
-
-    Clean();
+    if (!ValidateConnection())
+        return false;
 }
 
 bool WinsockClient::Startup()
@@ -86,11 +79,10 @@ bool WinsockClient::ResolveConnection()
     return true;
 }
 
-bool WinsockClient::Poll()
+bool WinsockClient::TryConnectToAddress()
 {
     for (myConnection->myPointer = myConnection->myResult; myConnection->myPointer != nullptr; myConnection->myPointer = myConnection->myPointer->ai_next)
     {
-        // Create a SOCKET for connecting to server
         myConnection->mySocket = socket(myConnection->myPointer->ai_family, myConnection->myPointer->ai_socktype, myConnection->myPointer->ai_protocol);
         if (myConnection->mySocket == INVALID_SOCKET)
         {
@@ -99,7 +91,6 @@ bool WinsockClient::Poll()
             return false;
         }
 
-        // Connect to server.
         const int result = connect(myConnection->mySocket, myConnection->myPointer->ai_addr, (int)myConnection->myPointer->ai_addrlen);
         if (result == SOCKET_ERROR)
         {
@@ -116,8 +107,7 @@ bool WinsockClient::Poll()
 
 bool WinsockClient::Send(const char* aMessage)
 {
-    myConnection->myOutMessage = aMessage;
-    const int result = send(myConnection->mySocket, myConnection->myOutMessage, (int)strlen(myConnection->myOutMessage), 0);
+    const int result = send(myConnection->mySocket, aMessage, (int)strlen(aMessage), 0);
     if (result == SOCKET_ERROR)
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -145,22 +135,34 @@ bool WinsockClient::Close()
     return true;
 }
 
-void WinsockClient::Fetch()
+bool WinsockClient::Fetch()
 {
+    char recvbuf[512];
+    int recvbuflen = 512;
     int result = 0;
+
     do {
-        result = recv(myConnection->mySocket, myConnection->myInMessage, myConnection->myInMessageBufferLength, 0);
+        result = recv(myConnection->mySocket, recvbuf, recvbuflen, 0);
         if (result > 0)
+        {
             printf("Bytes received: %d\n", result);
+        }
         else if (result == 0)
+        {
             printf("Connection closed\n");
+        }
         else
+        {
             printf("recv failed with error: %d\n", WSAGetLastError());
+            return false;
+        }
 
     } while (result > 0);
+
+    return true;
 }
 
-bool WinsockClient::Fail()
+bool WinsockClient::ValidateConnection()
 {
     if (myConnection->mySocket == INVALID_SOCKET)
     {
@@ -170,11 +172,5 @@ bool WinsockClient::Fail()
     }
 
     return true;
-}
-
-void WinsockClient::Clean()
-{
-    closesocket(myConnection->mySocket);
-    WSACleanup();
 }
 #endif // WIN32
