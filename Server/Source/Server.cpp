@@ -8,6 +8,7 @@ int __cdecl main(void)
 {
 #ifdef WIN32
     WinsockServer server;
+    server.Update();
 #elif !WIN32
 #include "UnixServer.h"
     UnixServer server;
