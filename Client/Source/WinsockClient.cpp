@@ -17,7 +17,7 @@
 
 #define DEFAULT_PORT "27015"
 
-WinsockClient::WinsockClient() : myConnection(nullptr)
+WinsockClient::WinsockClient() : myConnection(nullptr), myShouldClose(false)
 {
 }
 
@@ -51,6 +51,42 @@ bool WinsockClient::Connect(const char* aServerName)
 
     if (!ValidateConnection())
         return false;
+}
+
+bool WinsockClient::Update()
+{
+    while (!myShouldClose)
+    {
+        std::string input;
+        std::cout << "Enter a message:" << std::endl;
+        std::cin >> input;
+
+        if (input.length() > 0)
+        {
+            Send(input.c_str());
+            myShouldClose = true;
+        }
+
+        char buffer[512];
+        Receive(buffer, sizeof(buffer));
+
+        if (buffer > 0)
+        {
+            std::cout << buffer << std::endl;
+        }
+        else if (buffer == 0)
+        {
+            printf("Connection closed\n");
+        }
+        else
+        {
+            printf("recv failed with error: %d\n", WSAGetLastError());
+        }
+
+        myShouldClose = true;
+    }
+
+    return true;
 }
 
 bool WinsockClient::Startup()
@@ -135,31 +171,14 @@ bool WinsockClient::Close()
     return true;
 }
 
-bool WinsockClient::Fetch()
+size_t WinsockClient::Receive(char* buffer, size_t size)
 {
-    char recvbuf[512];
-    int recvbuflen = 512;
-    int result = 0;
+    size_t total = 0, n = 0;
+    while ((n = ::recv(myConnection->mySocket, buffer + total, size - total - 1, 0)) > 0)
+        total += n;
 
-    do {
-        result = recv(myConnection->mySocket, recvbuf, recvbuflen, 0);
-        if (result > 0)
-        {
-            printf("Bytes received: %d\n", result);
-        }
-        else if (result == 0)
-        {
-            printf("Connection closed\n");
-        }
-        else
-        {
-            printf("recv failed with error: %d\n", WSAGetLastError());
-            return false;
-        }
-
-    } while (result > 0);
-
-    return true;
+    buffer[total] = 0;
+    return total;
 }
 
 bool WinsockClient::ValidateConnection()

@@ -12,13 +12,11 @@ int __cdecl main(int argc, char** argv)
     WinsockClient client;
 
     std::string input;
-
     std::cout << "Enter the server name:" << std::endl;
     std::cin >> input;
 
     client.Connect(input.c_str());
-    client.Send("Hello World!");
-    client.Fetch();
+    client.Update();
     client.Close();
 #elif !WIN32
     UnixClient client;

@@ -10,8 +10,9 @@ public:
 	~WinsockClient();
 
 	bool Connect(const char* aServerName);
+	bool Update();
 	bool Send(const char* aMessage);
-	bool Fetch();
+	size_t Receive(char* buffer, size_t size);
 	bool Close();
 
 private:
@@ -22,5 +23,6 @@ private:
 
 private:
 	Connection* myConnection;
+	bool myShouldClose;
 };
 #endif // WIN32
