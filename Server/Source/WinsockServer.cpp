@@ -124,10 +124,11 @@ int WinsockServer::Update()
             return 1;
         }
 
-    } while (iResult > 0);
+    } while (iResult <= 0);
 
     // Send dummy message
-    iSendResult = send(ClientSocket, "hello world", iResult, 0);
+    iSendResult = send(ClientSocket, "hello world", (int)strlen("hello world"), 0);
+    printf("Bytes sent: %d\n", iResult);
 
     // shutdown the connection since we're done
     iResult = shutdown(ClientSocket, SD_SEND);

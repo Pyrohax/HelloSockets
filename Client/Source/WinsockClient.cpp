@@ -68,7 +68,7 @@ bool WinsockClient::Update()
         }
 
         char buffer[512];
-        Receive(buffer, sizeof(buffer));
+        Receive(buffer, 512);
 
         if (buffer > 0)
         {
